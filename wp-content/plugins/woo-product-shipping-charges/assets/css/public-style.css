@@ -1,0 +1,17 @@
+.wpsc-product-shipping-dimension{
+    margin: 20px 0
+}
+.wpsc-product-shipping-dimension .wpsc-dimension-title {
+    padding-bottom: 16px;
+}
+.wpsc-product-shipping-dimension .wpsc-input-group{
+    margin-bottom: 10px;
+}
+.wpsc-product-shipping-dimension .wpsc-input-group:last-child{
+    margin-bottom: 0px;
+}
+
+.wpsc-product-shipping-dimension .wpsc-input-group label{
+    margin-bottom: 5px;
+    display: block;
+}

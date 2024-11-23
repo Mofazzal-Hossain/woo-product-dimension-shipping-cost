@@ -122,3 +122,75 @@ function wpsc_display_product_dimension_in_cart($item_data, $cart_item)
 
     return $item_data;
 }
+
+
+add_action('woocommerce_checkout_create_order_line_item', 'wpsc_save_product_dimensions_to_order', 10, 4);
+
+function  wpsc_save_product_dimensions_to_order($item, $cart_item_key, $values, $order)
+{
+    error_log(print_r($values, true));
+    if (isset($values['wpsc_product_width'])) {
+        $item->add_meta_data('Width', $values['wpsc_product_width'] . ' cm');
+    }
+    if (isset($values['wpsc_product_height'])) {
+        $item->add_meta_data('Height', $values['wpsc_product_height'] . ' cm');
+    }
+    if (isset($values['wpsc_product_length'])) {
+        $item->add_meta_data('Length', $values['wpsc_product_length'] . ' cm');
+    }
+}
+// add_action('woocommerce_order_details_before_order_table', 'wpsc_display_product_dimension_in_order', 10, 1);
+
+// function wpsc_display_product_dimension_in_order($order)
+// {
+//     echo '<h4>' . __('Product Dimensions', 'woo-product-shipping-charges') . '</h4>';
+//     echo '<table>
+//             <thead>
+//                 <tr>
+//                     <th>' . __('Width', 'woo-product-shipping-charges') . '</th>
+//                     <th>' . __('Height', 'woo-product-shipping-charges') . '</th>
+//                     <th>' . __('Length', 'woo-product-shipping-charges') . '</th>
+//                 </tr>
+//             </thead>
+//             <tbody style="text-align: center;">';
+
+//     foreach ($order->get_items() as $item) {
+//         $width  = $item->get_meta('Width');
+//         $height = $item->get_meta('Height');
+//         $length = $item->get_meta('Length');
+
+//         if ($width || $height || $length) {
+//             echo '<tr>
+//                     <td>' . esc_html($width) . '</td>
+//                     <td>' . esc_html($height) . '</td>
+//                     <td>' . esc_html($length) . '</td>
+//                   </tr>';
+//         }
+//     }
+
+//     echo '</tbody></table>';
+// }
+
+// add_action('woocommerce_admin_order_data_after_order_details', 'wpsc_display_product_dimension_admin', 10, 1);
+// function wpsc_display_product_dimension_admin($item)
+// {
+//     $width  = $item->get_meta('wpsc_product_width');
+//     $height = $item->get_meta('wpsc_product_height');
+//     $length = $item->get_meta('wpsc_product_length');
+//     echo '<h4>' . __('Product Dimensions', 'woo-product-shipping-charges') . '</h4>';
+//     echo '<table><thead><tr>
+//                 <th>' . __('Width', 'woo-product-shipping-charges') . '</th>
+//                 <th>' . __('Height', 'woo-product-shipping-charges') . '</th>
+//                 <th>' . __('Length', 'woo-product-shipping-charges') . '</th>
+//             </tr>
+//         </thead>
+//         <tbody style="text-align: center;">';
+//     if ($width || $height || $length) {
+//         echo '<tr>
+//             <td>' . esc_html($width) . ' cm</td>
+//             <td>' . esc_html($height) . ' cm</td>
+//             <td>' . esc_html($length) . ' cm</td>
+//         </tr>';
+//     }
+//     echo '</tbody></table>';
+// }

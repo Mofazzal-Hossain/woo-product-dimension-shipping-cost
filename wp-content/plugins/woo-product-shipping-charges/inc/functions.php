@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // product dimension input
 add_action('woocommerce_before_add_to_cart_button', 'wpsc_before_add_to_cart_button');
@@ -161,3 +161,48 @@ function  wpsc_save_product_dimensions_to_order($item, $cart_item_key, $values, 
 // }
 
 
+// Limit to one product in cart
+add_filter("woocommerce_add_to_cart_validation", "wpsc_limit_to_one_product", 10, 3);
+
+function wpsc_limit_to_one_product($passed_validation, $product_id, $quantity)
+{
+    if (WC()->cart->get_cart_contents_count() > 0) {
+        wc_add_notice(__('You can only add one product to the cart at a time. Please remove the current product before adding a new one.', 'woo-product-shipping-charges'), 'error');
+        return false;
+    }
+
+    return $passed_validation;
+}
+
+
+// Calculate shipping charge based on product dimension
+add_action('woocommerce_package_rates', 'wpsc_calculate_shipping_charge_based_on_dimension', 10, 2);
+
+function wpsc_calculate_shipping_charge_based_on_dimension($rates, $package)
+{
+
+
+    foreach (WC()->cart->get_cart() as $cart_item) {
+        $wpsc_width = isset($cart_item['wpsc_product_width']) ? $cart_item['wpsc_product_width'] : 0;
+        $wpsc_height = isset($cart_item['wpsc_product_height']) ? $cart_item['wpsc_product_height'] : 0;
+        $wpsc_length = isset($cart_item['wpsc_product_length']) ? $cart_item['wpsc_product_length'] : 0;
+
+        $total_dimension = $wpsc_width * $wpsc_height * $wpsc_length;
+        $charge_multiplier = floatval($total_dimension / 181);
+
+        // shipping charge
+        foreach ($rates as $rate_id => $rate) {
+            $rates[$rate_id]->cost = $rates[$rate_id]->cost * $charge_multiplier;
+
+            // tax rate 
+            if(!empty($rates[$rate_id]->taxes)){
+                foreach($rates[$rate_id]->taxes as $tax_id => $tax){
+                    $rates[$rate_id]->taxes[$tax_id] = $tax * $charge_multiplier;
+                }
+            }
+        }
+        break;
+    }
+
+    return $rates;
+}

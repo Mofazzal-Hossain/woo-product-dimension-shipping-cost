@@ -26,6 +26,7 @@ function wpsc_load_textdomain()
 define("WPSC_VERSION", '1.0.0');
 define('WPSC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WPSC_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('WPSC_PLUGIN_INC', WPSC_PLUGIN_DIR . 'inc');
 define('WPSC_PLUGIN_ASSETS', WPSC_PLUGIN_URL . 'assets');
 
 
@@ -39,4 +40,4 @@ function wpsc_enqueue_scripts()
 
 
 // Include Files
-include_once WPSC_PLUGIN_DIR . 'inc/functions.php';
+include_once WPSC_PLUGIN_INC . '/functions.php';

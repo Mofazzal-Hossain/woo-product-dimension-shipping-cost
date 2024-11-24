@@ -181,7 +181,6 @@ add_action('woocommerce_package_rates', 'wpsc_calculate_shipping_charge_based_on
 function wpsc_calculate_shipping_charge_based_on_dimension($rates, $package)
 {
 
-
     foreach (WC()->cart->get_cart() as $cart_item) {
         $wpsc_width = isset($cart_item['wpsc_product_width']) ? $cart_item['wpsc_product_width'] : 0;
         $wpsc_height = isset($cart_item['wpsc_product_height']) ? $cart_item['wpsc_product_height'] : 0;
@@ -195,8 +194,8 @@ function wpsc_calculate_shipping_charge_based_on_dimension($rates, $package)
             $rates[$rate_id]->cost = $rates[$rate_id]->cost * $charge_multiplier;
 
             // tax rate 
-            if(!empty($rates[$rate_id]->taxes)){
-                foreach($rates[$rate_id]->taxes as $tax_id => $tax){
+            if (!empty($rates[$rate_id]->taxes)) {
+                foreach ($rates[$rate_id]->taxes as $tax_id => $tax) {
                     $rates[$rate_id]->taxes[$tax_id] = $tax * $charge_multiplier;
                 }
             }
@@ -205,4 +204,12 @@ function wpsc_calculate_shipping_charge_based_on_dimension($rates, $package)
     }
 
     return $rates;
+}
+
+add_filter('woocommerce_cart_item_quantity', 'wc_cart_item_quantity', 10, 3);
+
+function wc_cart_item_quantity($product_quantity, $cart_item_key, $cart_item)
+{
+    $quantity = $cart_item['quantity'];
+    return '<span class="cart-item-quantity">' . esc_html($quantity) . '</span>';
 }

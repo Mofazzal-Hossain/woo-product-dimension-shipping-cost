@@ -18,4 +18,12 @@ jQuery(document).ready(function ($) {
 
     // Run on page load
     wpscToggleAddToCartButton();
+
+
+    // disable cart product update
+    const quantityInputs = document.querySelectorAll(".quantity .qty");
+    quantityInputs.forEach(input => {
+        input.setAttribute("disabled", true);
+    });
+
 });

@@ -162,17 +162,17 @@ function  wpsc_save_product_dimensions_to_order($item, $cart_item_key, $values, 
 
 
 // Limit to one product in cart
-add_filter("woocommerce_add_to_cart_validation", "wpsc_limit_to_one_product", 10, 3);
+// add_filter("woocommerce_add_to_cart_validation", "wpsc_limit_to_one_product", 10, 3);
 
-function wpsc_limit_to_one_product($passed_validation, $product_id, $quantity)
-{
-    if (WC()->cart->get_cart_contents_count() > 0) {
-        wc_add_notice(__('You can only add one product to the cart at a time. Please remove the current product before adding a new one.', 'woo-product-shipping-charges'), 'error');
-        return false;
-    }
+// function wpsc_limit_to_one_product($passed_validation, $product_id, $quantity)
+// {
+//     if (WC()->cart->get_cart_contents_count() > 0) {
+//         wc_add_notice(__('You can only add one product to the cart at a time. Please remove the current product before adding a new one.', 'woo-product-shipping-charges'), 'error');
+//         return false;
+//     }
 
-    return $passed_validation;
-}
+//     return $passed_validation;
+// }
 
 
 // Calculate shipping charge based on product dimension
@@ -206,10 +206,10 @@ function wpsc_calculate_shipping_charge_based_on_dimension($rates, $package)
     return $rates;
 }
 
-add_filter('woocommerce_cart_item_quantity', 'wc_cart_item_quantity', 10, 3);
+// add_filter('woocommerce_cart_item_quantity', 'wc_cart_item_quantity', 10, 3);
 
-function wc_cart_item_quantity($product_quantity, $cart_item_key, $cart_item)
-{
-    $quantity = $cart_item['quantity'];
-    return '<span class="cart-item-quantity">' . esc_html($quantity) . '</span>';
-}
+// function wc_cart_item_quantity($product_quantity, $cart_item_key, $cart_item)
+// {
+//     $quantity = $cart_item['quantity'];
+//     return '<span class="cart-item-quantity">' . esc_html($quantity) . '</span>';
+// }

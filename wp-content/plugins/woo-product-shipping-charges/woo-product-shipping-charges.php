@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: Woo Product Shipping Charges
- * Plugin URI: mailto:mosharofmd74@gmail.com
+ * Plugin URI: https://github.com/Mofazzal-Hossain/woo-product-shipping-charges
  * Description: This plugin adds custom shipping charges based on product dimensions in WooCommerce. 
  * Version: 1.0.0
  * Author: Mofazzal Hossain

@@ -1,5 +1,5 @@
 **Woo Product Shipping Charges** <br>
-Contributors: Mofazzal-Hossain <br>
+Contributors: **Mofazzal-Hossain** <br>
 Donate link: https://www.fiverr.com/mofazzal98 <br>
 Tags: shipping, product dimensions, WooCommerce, cart, checkout <br>
 Requires at least: 4.7 <br>

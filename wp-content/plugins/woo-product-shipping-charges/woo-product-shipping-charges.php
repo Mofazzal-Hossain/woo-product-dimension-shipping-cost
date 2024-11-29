@@ -9,6 +9,7 @@
  * Author URI: mailto:mosharofmd74@gmail.com
  * Text Domain: woo-product-shipping-charges
  */
+
 //  Exit if accessed directly
 if (!defined('ABSPATH')) {
     exit;

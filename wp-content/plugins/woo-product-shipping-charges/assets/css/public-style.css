@@ -7,6 +7,9 @@
 .wpsc-product-shipping-dimension .wpsc-input-group{
     margin-bottom: 10px;
 }
+.wpsc-product-shipping-dimension .wpsc-input-group .wpsc-form-input::placeholder{
+    color: #66666698    
+}
 .wpsc-product-shipping-dimension .wpsc-input-group:last-child{
     margin-bottom: 0px;
 }

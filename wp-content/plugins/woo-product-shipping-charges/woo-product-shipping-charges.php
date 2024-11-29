@@ -15,13 +15,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Load Text Domain
-add_action('load_textdomain', 'wpsc_load_textdomain');
-function wpsc_load_textdomain()
-{
-    load_plugin_textdomain('woo-product-shipping-charges', false, dirname(plugin_basename(__FILE__)) . '/languages');
-}
-
 // Define Constants
 define("WPSC_VERSION", '1.0.0');
 define('WPSC_PLUGIN_DIR', plugin_dir_path(__FILE__));

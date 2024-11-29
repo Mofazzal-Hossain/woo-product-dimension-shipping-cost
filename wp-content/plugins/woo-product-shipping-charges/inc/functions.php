@@ -108,18 +108,21 @@ add_filter('woocommerce_get_item_data', 'wpsc_display_product_dimension_in_cart'
 
 function wpsc_display_product_dimension_in_cart($item_data, $cart_item)
 {
+    // display product length
     if (isset($cart_item['wpsc_product_length'])) {
         $item_data[] = [
             'name' => 'Length',
             'value' => esc_html($cart_item['wpsc_product_length']) . ' cm',
         ];
     }
+    // display product width
     if (isset($cart_item['wpsc_product_width'])) {
         $item_data[] = array(
             'name' => 'Width',
             'value' => esc_html($cart_item['wpsc_product_width']) . ' cm',
         );
     }
+    // display product height
     if (isset($cart_item['wpsc_product_height'])) {
         $item_data[] = [
             'name' => 'Height',
@@ -136,6 +139,7 @@ add_action('woocommerce_checkout_create_order_line_item', 'wpsc_save_product_dim
 
 function  wpsc_save_product_dimensions_to_order($item, $cart_item_key, $values, $order)
 {
+
     if (isset($values['wpsc_product_length'])) {
         $item->add_meta_data('Length', $values['wpsc_product_length'] . ' cm');
     }
@@ -152,6 +156,7 @@ add_filter("woocommerce_add_to_cart_validation", "wpsc_limit_to_one_product", 10
 
 function wpsc_limit_to_one_product($passed_validation, $product_id, $quantity)
 {
+    // Check if there is already one product in the cart
     if (WC()->cart->get_cart_contents_count() > 0) {
         wc_add_notice(__('You can only add one product to the cart at a time. Please remove the current product before adding a new one.', 'woo-product-shipping-charges'), 'error');
         return false;

@@ -26,8 +26,8 @@ define('WPSC_PLUGIN_ASSETS', WPSC_PLUGIN_URL . 'assets');
 add_action('wp_enqueue_scripts', 'wpsc_enqueue_scripts');
 function wpsc_enqueue_scripts()
 {
-    wp_enqueue_style('wpsc-public-style', WPSC_PLUGIN_ASSETS . '/css/public-style.css', [], time());
-    wp_enqueue_script('wpsc-public-main', WPSC_PLUGIN_ASSETS . '/js/public-main.js', ['jquery'], time(), true);
+    wp_enqueue_style('wpsc-public-style', WPSC_PLUGIN_ASSETS . '/css/public-style.css', [], WPSC_VERSION);
+    wp_enqueue_script('wpsc-public-main', WPSC_PLUGIN_ASSETS . '/js/public-main.js', ['jquery'], WPSC_VERSION, true);
 }
 
 

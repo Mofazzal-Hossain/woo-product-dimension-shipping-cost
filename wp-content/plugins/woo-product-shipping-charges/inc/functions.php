@@ -1,9 +1,52 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+// product shipping limit
+add_action("woocommerce_product_options_shipping_product_data", "wpsc_add_product_dimension_field");
+function wpsc_add_product_dimension_field()
+{
+    echo '<div class="options_group">';
+
+    // Add Shipping Limit Field
+    woocommerce_wp_text_input([
+        'id' => '_wpsc_shipping_limit',
+        'label' => __('Shipping Charge Limit (cm)', 'woo-product-shipping-charges'),
+        'desc_tip' => false,
+        'type' => 'number',
+        'value' => get_post_meta(get_the_ID(), '_wpsc_shipping_limit', true) ?: 180,
+        'description' => __('Enter the default shipping charge limit in centimeters. If the product dimensions exceed this limit, shipping charges will be calculated proportionally based on the product dimensions.', 'woo-product-shipping-charges'),
+        'custom_attributes' => [
+            'min' => '1',
+        ],
+    ]);
+
+    echo '</div>';
+}
+
+// save product shipping limit
+add_action('woocommerce_process_product_meta', 'wpsc_save_product_shipping_limit_meta');
+function wpsc_save_product_shipping_limit_meta($product_id)
+{
+    if (isset($_POST['_wpsc_shipping_limit'])) {
+        update_post_meta($product_id, '_wpsc_shipping_limit', sanitize_text_field($_POST['_wpsc_shipping_limit']));
+    }
+}
+
 // product dimension input
 add_action('woocommerce_before_add_to_cart_button', 'wpsc_before_add_to_cart_button');
 function wpsc_before_add_to_cart_button()
 {
+    global $product;
+    $product_id = $product->get_id();
+
+    // Get Product Shipping Dimension
+    $product_length = get_post_meta($product_id, '_length', true) ?: '';
+    $product_width = get_post_meta($product_id, '_width', true) ?: '';
+    $product_height = get_post_meta($product_id, '_height', true) ?: '';
+
 ?>
     <div class="wpsc-product-shipping-dimension">
         <!-- Product Dimension Title -->
@@ -12,25 +55,26 @@ function wpsc_before_add_to_cart_button()
         </h3>
         <!-- input group -->
         <div class="wpsc-input-group">
-            <label for="wpsc_product_width">
-                <?php echo esc_html_e('Width (CM)', 'woo-product-shipping-charges'); ?>
+            <label for="wpsc_product_length">
+                <?php echo esc_html_e('Length (cm)', 'woo-product-shipping-charges'); ?>
             </label>
-            <input type="number" name="wpsc_product_width" id="wpsc_product_width" min="1" class="wpsc-form-input wpsc-width" placeholder="e.g. 30">
+            <input type="number" name="wpsc_product_length" id="wpsc_product_length" min="1" class="wpsc-form-input wpsc-length" placeholder="e.g. 1" value="<?php echo esc_attr($product_length); ?>">
+        </div>
+        <!-- input group -->
+        <div class="wpsc-input-group">
+            <label for="wpsc_product_width">
+                <?php echo esc_html_e('Width (cm)', 'woo-product-shipping-charges'); ?>
+            </label>
+            <input type="number" name="wpsc_product_width" id="wpsc_product_width" min="1" class="wpsc-form-input wpsc-width" placeholder="e.g. 30" value="<?php echo esc_attr($product_width); ?>">
         </div>
         <!-- input group -->
         <div class="wpsc-input-group">
             <label for="wpsc_product_height">
-                <?php echo esc_html_e('Height (CM)', 'woo-product-shipping-charges'); ?>
+                <?php echo esc_html_e('Height (cm)', 'woo-product-shipping-charges'); ?>
             </label>
-            <input type="number" name="wpsc_product_height" id="wpsc_product_height" min="1" class="wpsc-form-input wpsc-height" placeholder="e.g. 20">
+            <input type="number" name="wpsc_product_height" id="wpsc_product_height" min="1" class="wpsc-form-input wpsc-height" placeholder="e.g. 20" value="<?php echo esc_attr($product_height); ?>">
         </div>
-        <!-- input group -->
-        <div class="wpsc-input-group">
-            <label for="wpsc_product_length">
-                <?php echo esc_html_e('Length (CM)', 'woo-product-shipping-charges'); ?>
-            </label>
-            <input type="number" name="wpsc_product_length" id="wpsc_product_length" min="1" class="wpsc-form-input wpsc-length" placeholder="e.g. 1">
-        </div>
+
     </div>
 <?php
 }
@@ -52,9 +96,9 @@ add_filter('woocommerce_add_cart_item_data', 'wpsc_save_product_dimension_input'
 function wpsc_save_product_dimension_input($cart_item_data, $product_id)
 {
     if (isset($_POST['wpsc_product_width']) && isset($_POST['wpsc_product_height']) && isset($_POST['wpsc_product_length'])) {
+        $cart_item_data['wpsc_product_length'] = sanitize_text_field($_POST['wpsc_product_length']);
         $cart_item_data['wpsc_product_width'] = sanitize_text_field($_POST['wpsc_product_width']);
         $cart_item_data['wpsc_product_height'] = sanitize_text_field($_POST['wpsc_product_height']);
-        $cart_item_data['wpsc_product_length'] = sanitize_text_field($_POST['wpsc_product_length']);
     }
     return $cart_item_data;
 }
@@ -64,6 +108,12 @@ add_filter('woocommerce_get_item_data', 'wpsc_display_product_dimension_in_cart'
 
 function wpsc_display_product_dimension_in_cart($item_data, $cart_item)
 {
+    if (isset($cart_item['wpsc_product_length'])) {
+        $item_data[] = [
+            'name' => 'Length',
+            'value' => esc_html($cart_item['wpsc_product_length']) . ' cm',
+        ];
+    }
     if (isset($cart_item['wpsc_product_width'])) {
         $item_data[] = array(
             'name' => 'Width',
@@ -76,12 +126,7 @@ function wpsc_display_product_dimension_in_cart($item_data, $cart_item)
             'value' => esc_html($cart_item['wpsc_product_height']) . ' cm',
         ];
     }
-    if (isset($cart_item['wpsc_product_length'])) {
-        $item_data[] = [
-            'name' => 'Length',
-            'value' => esc_html($cart_item['wpsc_product_length']) . ' cm',
-        ];
-    }
+
 
     return $item_data;
 }
@@ -91,14 +136,14 @@ add_action('woocommerce_checkout_create_order_line_item', 'wpsc_save_product_dim
 
 function  wpsc_save_product_dimensions_to_order($item, $cart_item_key, $values, $order)
 {
+    if (isset($values['wpsc_product_length'])) {
+        $item->add_meta_data('Length', $values['wpsc_product_length'] . ' cm');
+    }
     if (isset($values['wpsc_product_width'])) {
         $item->add_meta_data('Width', $values['wpsc_product_width'] . ' cm');
     }
     if (isset($values['wpsc_product_height'])) {
         $item->add_meta_data('Height', $values['wpsc_product_height'] . ' cm');
-    }
-    if (isset($values['wpsc_product_length'])) {
-        $item->add_meta_data('Length', $values['wpsc_product_length'] . ' cm');
     }
 }
 
@@ -122,15 +167,23 @@ add_action('woocommerce_package_rates', 'wpsc_calculate_shipping_charge_based_on
 
 function wpsc_calculate_shipping_charge_based_on_dimension($rates, $package)
 {
-  
+
     foreach (WC()->cart->get_cart() as $cart_item) {
+
+        // Retrieve the shipping limit for the product
+        $product_id = $cart_item['product_id'];
+        $shipping_limit = get_post_meta($product_id, '_wpsc_shipping_limit', true);
+
+        // Set default shipping limit if not defined
+        $shipping_limit = !empty($shipping_limit) ? $shipping_limit : 180;
+
+        $wpsc_length = isset($cart_item['wpsc_product_length']) ? $cart_item['wpsc_product_length'] : 0;
         $wpsc_width = isset($cart_item['wpsc_product_width']) ? $cart_item['wpsc_product_width'] : 0;
         $wpsc_height = isset($cart_item['wpsc_product_height']) ? $cart_item['wpsc_product_height'] : 0;
-        $wpsc_length = isset($cart_item['wpsc_product_length']) ? $cart_item['wpsc_product_length'] : 0;
 
         $total_dimension = $wpsc_width * $wpsc_height * $wpsc_length;
-        $charge_multiplier = intval($total_dimension / 180) + 1;
-        
+        $charge_multiplier = intval($total_dimension / $shipping_limit) + 1;
+
         // shipping charge
         foreach ($rates as $rate_id => $rate) {
             $rates[$rate_id]->cost = $rates[$rate_id]->cost * $charge_multiplier;
